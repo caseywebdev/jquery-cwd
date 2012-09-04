@@ -1,0 +1,19 @@
+{
+  "name": "jquery-cwd",
+  "version": "0.0.1",
+  "author": "Casey Foster <casey@caseywebdev.com>",
+  "licence": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caseywebdev/jquery-cwd.git"
+  },
+  "devDependencies": {
+    "coffee-script": "x",
+    "mocha": "x",
+    "chai": "x"
+  },
+  "engines": {
+    "node": "x",
+    "npm": "x"
+  }
+}
