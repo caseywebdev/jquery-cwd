@@ -4,20 +4,7 @@
 
   Search = {
     clean: function(str) {
-      return str.toLowerCase().replace(/\s{2,}/g, ' ').replace(/^\s*|\s*$/g, '');
-    },
-    page: function($searches, n, prev) {
-      return $searches.each(function() {
-        var $results, $search;
-        $search = $(this);
-        $results = $search.data('search$Results');
-        n = Math.min($results.find('.page').length - 1, Math.max(n, 0));
-        $results.find('.selected').removeClass('selected');
-        $results.find('.page').css({
-          display: 'none'
-        }).eq(n).removeAttr('style').find('.result:not(.prev):not(.next)')[prev ? 'last' : 'first']().addClass('selected');
-        return $search.data('searchPage', n);
-      });
+      return str.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
     },
     query: function($searches, urlN) {
       if (urlN == null) {
@@ -27,16 +14,16 @@
         var $q, $results, $search, anotherSearch, callback, o, q, t, _base, _ref;
         o = Search;
         $search = $(this);
-        $results = $search.data('search$Results');
-        $q = $search.data('search$Q');
+        $results = $search.data().search$Results;
+        $q = $search.data().search$Q;
         callback = $search.data().searchCallback;
-        q = Search.clean($q.val());
+        q = o.clean($q.val());
         t = new Date().getTime();
         $results.css({
           display: 'block'
         });
         anotherSearch = $search.data("searchUrl" + (urlN + 1)) != null;
-        if (!(q || ($search.data('empty') != null))) {
+        if (!(q || $search.data().searchEmpty)) {
           $results.css({
             display: 'none'
           }).empty();
@@ -48,186 +35,190 @@
           if (typeof (_base = $search.data().searchAjax).abort === "function") {
             _base.abort();
           }
-          if ($search.data().searchCache[("" + urlN + "_") + q] != null) {
+          if ($search.data().searchCache[("" + urlN + "-") + q] != null) {
             if (!anotherSearch) {
               $search.removeClass('loading');
             }
-            callback($search, $search.data().searchCache[("" + urlN + "_") + q], urlN);
+            callback($search, $search.data().searchCache[("" + urlN + "-") + q], urlN);
             if (anotherSearch) {
               o.query($search, urlN + 1);
             }
           } else {
-            $search.data('searchTimeout', setTimeout(function() {
-              var check, handleData;
-              handleData = function(data) {
-                $search.data().searchCache[("" + urlN + "_") + q] = data;
-                if (check === $search.data().searchId && (_.clean($q.val()) || ($search.data('empty') != null))) {
-                  if (!anotherSearch) {
-                    $search.removeClass('loading');
+            $search.data({
+              searchTimeout: _.delay(function() {
+                var check, handleData;
+                handleData = function(data) {
+                  $search.data().searchCache[("" + urlN + "-") + q] = data;
+                  if (check === $search.data().searchId && (o.clean($q.val()) || $search.data().empty)) {
+                    if (!anotherSearch) {
+                      $search.removeClass('loading');
+                    }
+                    callback($search, data, urlN);
                   }
-                  callback($search, data, urlN);
+                  if (anotherSearch) {
+                    return o.query($search, urlN + 1);
+                  }
+                };
+                check = $search.data({
+                  searchId: $search.data().searchId + 1
+                }).data().searchId;
+                if ($search.data().searchJs) {
+                  return handleData($search.data().searchJs(q));
+                } else if ($search.data().searchUrl != null) {
+                  return $search.data({
+                    searchAjax: $.getJSON($search.data("searchUrl" + (urlN === 1 ? '' : urlN)), {
+                      q: q
+                    }, handleData)
+                  });
                 }
-                if (anotherSearch) {
-                  return o.query($search, urlN + 1);
-                }
-              };
-              check = $search.data({
-                searchId: $search.data().searchId + 1
-              }).data().searchId;
-              if ($search.data().searchJs) {
-                return handleData($search.data().searchJs(q));
-              } else if ($search.data().searchUrl != null) {
-                return $search.data({
-                  searchAjax: $.getJSON($search.data("searchUrl" + (urlN === 1 ? '' : urlN)), {
-                    q: q
-                  }, handleData)
-                });
-              }
-            }, (_ref = $search.data().searchDelay) != null ? _ref : 0));
+              }, (_ref = $search.data().searchDelay) != null ? _ref : 0)
+            });
           }
         }
-        return $search.data('searchLastQ', q);
+        return $search.data({
+          searchLastQ: q
+        });
       });
     },
     select: function($searches, dir) {
       return $searches.each(function() {
-        var $page, $search, o;
+        var $current, $new, $results, $search, $selected, o, rHeight, rScrollTop, sHeight, sTop;
         o = Search;
         $search = $(this);
-        $page = $search.find('.page').eq($search.data().searchPage);
-        if (!$page.find('.selected').removeClass('selected')[dir]().addClass('selected').length) {
-          $page.find('.result')[dir === 'prev' ? 'first' : 'last']().addClass('selected');
+        $results = $search.data().search$Results;
+        $current = $results.find('.selected');
+        if (($new = $current[dir]()).length) {
+          $current.removeClass('selected');
+          ($selected = $new).addClass('selected');
+        } else {
+          $selected = $current;
         }
-        if ($page.find('.result.selected.prev').length) {
-          return o.page($search, $search.data().searchPage - 1, true);
-        } else if ($page.find('.result.selected.next').length) {
-          return o.page($search, $search.data().searchPage + 1);
+        if ($results.is(':hover')) {
+          return;
         }
+        rHeight = $results.height();
+        rScrollTop = $results.scrollTop();
+        sTop = $selected.position().top;
+        sHeight = $selected.height();
+        return $results.scrollTop(sTop + rScrollTop - (rHeight - sHeight) / 2);
       });
     }
   };
 
-  $.fn.search = function($q, $results, options) {
-    var $search, key, o, val;
-    if (options == null) {
-      options = {};
-    }
-    $search = $(this);
-    if ($search.data().searchCache == null) {
-      o = Search;
-      $search.data({
-        searchCache: [],
-        searchId: 0,
-        searchAjax: {},
-        searchLastQ: null,
-        searchPage: 0,
-        searchHoldHover: false,
-        search$Q: $q,
-        search$Results: $results
-      });
-      for (key in options) {
-        val = options[key];
-        $search.data("search" + (key.replace(/(\w)/, function(s) {
-          return s.toUpperCase();
-        })), val);
+  $.extend($.fn, {
+    search: function($q, $results, options) {
+      if (options == null) {
+        options = {};
       }
-      if ($q.is(':focus')) {
-        o.query($search);
-      }
-      $search.hover(function() {
-        return $search.data({
-          searchHover: true
-        });
-      }, function() {
-        $search.data({
-          searchHover: false
-        });
-        if (!($q.is(':focus') || $search.data().searchHoldHover)) {
-          return $results.css({
-            display: 'none'
+      return $(this).each(function() {
+        var $search, key, o, val;
+        $search = $(this);
+        if (!$search.data().searchCache) {
+          o = Search;
+          $search.data({
+            searchCache: [],
+            searchId: 0,
+            searchAjax: {},
+            searchLastQ: null,
+            searchHoldHover: false,
+            search$Q: $q,
+            search$Results: $results
           });
-        }
-      }).mouseover(function() {
-        return $search.data({
-          searchHoldHover: false
-        });
-      });
-      $q.blur(function() {
-        return _.defer(function() {
-          if (!$search.data().searchHover) {
-            return $results.css({
-              display: 'none'
-            });
+          for (key in options) {
+            val = options[key];
+            $search.data("search" + (key.replace(/(\w)/, function(s) {
+              return s.toUpperCase();
+            })), val);
           }
-        });
-      }).focus(function() {
-        return $search.data({
-          searchHoldHover: false
-        });
-      }).keydown(function(e) {
-        switch (e.keyCode) {
-          case 13:
-            $search.find('.selected').click();
-            break;
-          case 38:
-            o.select($search, 'prev');
-            break;
-          case 40:
-            o.select($search, 'next');
-            break;
-          case 27:
-            if ($q.val() === '') {
-              $q.blur();
-              _.defer(function() {
-                return o.query($search);
-              });
-            } else {
-              _.defer(function() {
-                $q.val('');
-                return o.query($search);
+          if ($q.is(':focus')) {
+            o.query($search);
+          }
+          $search.hover(function() {
+            return $search.data({
+              searchHover: true
+            });
+          }, function() {
+            $search.data({
+              searchHover: false
+            });
+            if (!($q.is(':focus') || $search.data().searchHoldHover)) {
+              return $results.css({
+                display: 'none'
               });
             }
-            break;
-          default:
-            _.defer(function() {
-              if ($q.is(':focus')) {
-                return o.query($search);
+          }).mouseover(function() {
+            return $search.data({
+              searchHoldHover: false
+            });
+          });
+          $q.blur(function() {
+            return _.defer(function() {
+              if (!$search.data().searchHover) {
+                return $results.css({
+                  display: 'none'
+                });
               }
             });
-            return true;
-        }
-        return false;
-      }).on('focus keyup change', function() {
-        return o.query($search);
-      });
-      return $results.on('mouseenter click', '.result', function(e) {
-        var $t;
-        $t = $(this);
-        $results.find('.result.selected').removeClass('selected');
-        $t.addClass('selected');
-        if (e.type === 'click') {
-          if ($t.hasClass('prev')) {
-            o.page($search, $search.data().searchPage - 1, true);
-            $search.data({
-              searchHoldHover: true
+          }).focus(function() {
+            return $search.data({
+              searchHoldHover: false
             });
-          } else if ($t.hasClass('next')) {
-            o.page($search, $search.data().searchPage + 1);
-            $search.data({
-              searchHoldHover: true
-            });
-          } else if ($t.hasClass('submit')) {
-            $t.parents('form').submit();
-          }
-          if ($t.hasClass('hide')) {
-            $q.blur();
-            return $results.css({
-              display: 'none'
-            });
-          }
+          }).keydown(function(e) {
+            switch (e.keyCode) {
+              case 13:
+                $search.find('.selected').click();
+                break;
+              case 38:
+                o.select($search, 'prev');
+                break;
+              case 40:
+                o.select($search, 'next');
+                break;
+              case 27:
+                if ($q.val() === '') {
+                  $q.blur();
+                  _.defer(function() {
+                    return o.query($search);
+                  });
+                } else {
+                  _.defer(function() {
+                    $q.val('');
+                    return o.query($search);
+                  });
+                }
+                break;
+              default:
+                _.defer(function() {
+                  if ($q.is(':focus')) {
+                    return o.query($search);
+                  }
+                });
+                return true;
+            }
+            return false;
+          }).on('focus keyup change', function() {
+            return o.query($search);
+          });
+          return $results.on('mouseenter click', '.result', function(e) {
+            var $t;
+            $t = $(this);
+            $results.find('.result.selected').removeClass('selected');
+            $t.addClass('selected');
+            if (e.type === 'click') {
+              if ($t.hasClass('submit')) {
+                $t.parents('form').submit();
+              }
+              if ($t.hasClass('hide')) {
+                $q.blur();
+                return $results.css({
+                  display: 'none'
+                });
+              }
+            }
+          });
         }
       });
     }
-  };
+  });
 
 }).call(this);

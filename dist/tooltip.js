@@ -75,7 +75,7 @@
       return $els;
     },
     remove: function($els) {
-      Tooltip.$els = Tooltip.$els.no($els);
+      Tooltip.$els = Tooltip.$els.not($els);
       return $els.data({
         tooltipHover: false,
         tooltipHoverableHover: false

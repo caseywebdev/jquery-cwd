@@ -15,7 +15,7 @@
         $t = $(this);
         return _.defer(function() {
           var fold, showLine, visible;
-          visible = _.reduce($t.parents(), function(memo, parent) {
+          visible = _.reduce($t.parents().toArray(), function(memo, parent) {
             return memo && $(parent).css('display') !== 'none' && $(parent).css('visibility') !== 'hidden';
           }, true);
           fold = $(window).scrollTop() + $(window).outerHeight();

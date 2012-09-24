@@ -7,27 +7,28 @@
       var val;
       val = $.fn.val;
       return $.fn.val = function(str) {
-        var $t;
+        var $t, data;
         $t = $(this);
+        data = $t.data() || {};
         if (str === void 0) {
-          if ($t.data().placeholderIsEmpty) {
+          if (data.placeholderIsEmpty) {
             return '';
           } else {
             return val.call($t);
           }
         } else {
-          if (($t.data().placeholderIsEmpty != null) && !$t.is(':focus')) {
+          if ((data.placeholderIsEmpty != null) && !$t.is(':focus')) {
             if (str === '' || str === null) {
               $t.data({
                 placeholderIsEmpty: true
               });
-              val.call($t, $t.data().placeholderText);
-              if ($t.data().placeholderIsPassword) {
+              val.call($t, data.placeholderText);
+              if (data.placeholderIsPassword) {
                 $t[0].type = 'text';
               }
             } else {
               val.call($t, str);
-              if ($t.data().placeholderIsPassword) {
+              if (data.placeholderIsPassword) {
                 $t[0].type = 'password';
               }
               $t.data({
@@ -88,7 +89,7 @@
           $t.data({
             placeholderText: text,
             placeholderIsEmpty: false,
-            placeholderIsPassword: text
+            placeholderIsPassword: password
           });
           if (!$t.val() || $t.val() === text) {
             $t.val('');

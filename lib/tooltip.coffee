@@ -55,7 +55,7 @@ Tooltip =
     $els
 
   remove: ($els) ->
-    Tooltip.$els = Tooltip.$els.no $els
+    Tooltip.$els = Tooltip.$els.not $els
     $els
       .data(
         tooltipHover: false

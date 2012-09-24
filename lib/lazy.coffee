@@ -9,8 +9,9 @@ Lazy =
   check: ($imgs) ->
     $imgs.each ->
       $t = $ @
+      # Wait for a screen draw
       _.defer ->
-        visible = _.reduce $t.parents(), (memo, parent) ->
+        visible = _.reduce $t.parents().toArray(), (memo, parent) ->
           memo and $(parent).css('display') isnt 'none' and
             $(parent).css('visibility') isnt 'hidden'
         , true

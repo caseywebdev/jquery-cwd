@@ -6,17 +6,18 @@ Placeholder =
     val = $.fn.val
     $.fn.val = (str) ->
       $t = $ @
+      data = $t.data() or {}
       if str is undefined
-        if $t.data().placeholderIsEmpty then '' else val.call $t
+        if data.placeholderIsEmpty then '' else val.call $t
       else
-        if $t.data().placeholderIsEmpty? and not $t.is ':focus'
+        if data.placeholderIsEmpty? and not $t.is ':focus'
           if str in ['', null]
             $t.data placeholderIsEmpty: true
-            val.call $t, $t.data().placeholderText
-            $t[0].type = 'text' if $t.data().placeholderIsPassword
+            val.call $t, data.placeholderText
+            $t[0].type = 'text' if data.placeholderIsPassword
           else
             val.call $t, str
-            $t[0].type = 'password' if $t.data().placeholderIsPassword
+            $t[0].type = 'password' if data.placeholderIsPassword
             $t.data placeholderIsEmpty: false
         else
           val.call $t, str
@@ -52,7 +53,7 @@ $.fn.placeholder = (text, options = {}) ->
         $t.data
           placeholderText: text
           placeholderIsEmpty: false
-          placeholderIsPassword: text
+          placeholderIsPassword: password
         $t.val '' if not $t.val() or $t.val() is text
         $t.attr(
             placeholder: text
