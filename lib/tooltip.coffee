@@ -68,7 +68,8 @@ Tooltip =
   # Get the current tooltip$Div for an item or create a new one and return that
   divFor: ($t) ->
     unless $t.data 'tooltip$Div'
-      $t.parent().css position: 'relative' if $t.parent().css position: 'static'
+      if $t.parent().css('position') is 'static'
+        $t.parent().css position: 'relative'
       $t.data tooltipHoverable: false if $t.data().tooltipMouse?
       $t.data _.extend
         tooltipPosition: 'top'

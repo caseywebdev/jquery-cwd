@@ -87,9 +87,7 @@
     divFor: function($t) {
       var $div, position;
       if (!$t.data('tooltip$Div')) {
-        if ($t.parent().css({
-          position: 'static'
-        })) {
+        if ($t.parent().css('position') === 'static') {
           $t.parent().css({
             position: 'relative'
           });
