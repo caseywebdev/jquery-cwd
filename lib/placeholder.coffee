@@ -2,7 +2,7 @@ Placeholder =
 
   # Hijack jQuery's .val() so it will return an empty string if placeholder
   # says it should
-  bind: ->
+  init: _.once ->
     val = $.fn.val
     $.fn.val = (str) ->
       $t = $ @
@@ -35,8 +35,6 @@ Placeholder =
       $t = $ @
       _.defer ->
         $t.val '' unless $t.val()
-
-Placeholder.init = _.once Placeholder.bind
 
 # Expose to jQuery
 $.fn.placeholder = (text, options = {}) ->

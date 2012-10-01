@@ -25,7 +25,7 @@ $.scrollbarSize = (dimension = 'width') ->
   $out.css overflow: 'scroll'
   d2 = $in[dimension]()
   $out.remove()
-  d1-d2
+  d1 - d2
 
 # Does the element have a scrollbar?
 $.fn.hasScrollbar = ->

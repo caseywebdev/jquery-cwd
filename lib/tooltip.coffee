@@ -10,7 +10,7 @@ Tooltip =
     y: 0
 
   # Set events on document to track changes
-  bind: ->
+  init: _.once ->
     $('body').mousemove (e) ->
       Tooltip.mouse =
         x: e.pageX
@@ -37,7 +37,7 @@ Tooltip =
     Tooltip.remove $els
     Tooltip.$els = Tooltip.$els.add $els
     $els.data
-      tooltipHtml: html ? ''
+      tooltipHtml: options.html ? ''
       tooltipPosition: options.position ? 'top'
       tooltipOffset: options.offset ? 0
       tooltipDuration: options.duration ? 0
@@ -98,7 +98,7 @@ Tooltip =
 
       # If the tooltip is 'hoverable' (aka it should stay while the mouse is
       # over the tooltip itself)
-      if $t.data().tooltipHoverable?
+      if $t.data().tooltipHoverable
         $div.hover ->
           _.Tooltip.show $t
           $t.data tooltipHoverableHover: true
@@ -119,12 +119,11 @@ Tooltip =
 
   # Show the tooltip if it's not already visible
   show: ($t) ->
-    o = _.Tooltip
-    $div = o.divFor $t
-    unless (not $t.data().tooltipNoHover? and $t.data().tooltipHover) or
-            (not $t.data().tooltipNoFocus? and $t.is ':input:focus') or
+    $div = Tooltip.divFor $t
+    unless (not $t.data().tooltipNoHover and $t.data().tooltipHover) or
+            (not $t.data().tooltipNoFocus and $t.is ':input:focus') or
             $t.data().tooltipHoverableHover
-      position = o.position $t
+      position = Tooltip.position $t
       $div
         .appendTo($t.parent())
         .css(_.extend {display: 'block'}, position.home)
@@ -138,12 +137,11 @@ Tooltip =
 
   # Hide the tooltip if it's not already hidden
   hide: ($t) ->
-    o = _.Tooltip
     if $div = $t.data 'tooltip$Div'
-      unless (not $t.data().tooltipNoHover? and $t.data().tooltipHover) or
-              (not $t.data().tooltipNoFocus? and $t.is ':input:focus') or
+      unless (not $t.data().tooltipNoHover and $t.data().tooltipHover) or
+              (not $t.data().tooltipNoFocus and $t.is ':input:focus') or
               $t.data().tooltipHoverableHover
-        position = o.position $t
+        position = Tooltip.position $t
         $div
           .css(position.home)
           .find('> div')
@@ -156,7 +154,6 @@ Tooltip =
 
   # Method for getting the correct CSS position data for a tooltip
   position: ($t) ->
-    $t = $ @
     $div = $t.data 'tooltip$Div'
     $parent = $t.parent()
     offset = $t.data().tooltipOffset
@@ -164,7 +161,7 @@ Tooltip =
     divHeight = $div.outerHeight()
     parentScrollLeft = $parent.scrollLeft()
     parentScrollTop = $parent.scrollTop()
-    if $t.data().tooltipMouse?
+    if $t.data().tooltipMouse
       tLeft = Tooltip.mouse.x - $t.parent().offset().left + parentScrollLeft
       tTop = Tooltip.mouse.y - $t.parent().offset().top + parentScrollTop
       tWidth = tHeight = 0
@@ -200,7 +197,7 @@ Tooltip =
 # Expose to jQuery
 $.extend $.fn,
   tooltip: (options) ->
-    _.once Tooltip.bind
+    Tooltip.init()
     Tooltip.add $(@), options
 
   # Use this to correct the tooltip content and positioning between events if

@@ -3,7 +3,7 @@
   var Placeholder;
 
   Placeholder = {
-    bind: function() {
+    init: _.once(function() {
       var val;
       val = $.fn.val;
       return $.fn.val = function(str) {
@@ -41,7 +41,7 @@
           return $t;
         }
       };
-    },
+    }),
     listeners: {
       focus: function() {
         var $t;
@@ -69,8 +69,6 @@
       }
     }
   };
-
-  Placeholder.init = _.once(Placeholder.bind);
 
   $.fn.placeholder = function(text, options) {
     var password;

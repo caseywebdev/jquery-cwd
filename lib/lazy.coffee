@@ -2,7 +2,7 @@
 Lazy =
   $els: $()
 
-  bind: ->
+  init: _.once ->
     $(window).on 'scroll resize', ->
       Lazy.check Lazy.$els
 
@@ -21,8 +21,6 @@ Lazy =
           $t.attr 'src', $t.data().lazySrc
           Lazy.$els = Lazy.$els.not $t
     $imgs
-
-Lazy.init = _.once Lazy.bind
 
 # Load images only when they're on the page or about to be on it
 $.fn.lazy = (src, options = {}) ->

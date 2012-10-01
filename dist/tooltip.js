@@ -8,14 +8,14 @@
       x: 0,
       y: 0
     },
-    bind: function() {
+    init: _.once(function() {
       return $('body').mousemove(function(e) {
         return Tooltip.mouse = {
           x: e.pageX,
           y: e.pageY
         };
       });
-    },
+    }),
     listeners: {
       mousemove: function() {
         var $t;
@@ -45,21 +45,21 @@
       }
     },
     add: function($els, options) {
-      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
       if (options == null) {
         options = {};
       }
       Tooltip.remove($els);
       Tooltip.$els = Tooltip.$els.add($els);
       $els.data({
-        tooltipHtml: typeof html !== "undefined" && html !== null ? html : '',
-        tooltipPosition: (_ref = options.position) != null ? _ref : 'top',
-        tooltipOffset: (_ref1 = options.offset) != null ? _ref1 : 0,
-        tooltipDuration: (_ref2 = options.duration) != null ? _ref2 : 0,
-        tooltipNoHover: (_ref3 = options.noHover) != null ? _ref3 : false,
-        tooltipNoFocus: (_ref4 = options.noFocus) != null ? _ref4 : false,
-        tooltipMouse: (_ref5 = options.mouse) != null ? _ref5 : false,
-        tooltipHoverableHover: (_ref6 = options.hoverableHover) != null ? _ref6 : false
+        tooltipHtml: (_ref = options.html) != null ? _ref : '',
+        tooltipPosition: (_ref1 = options.position) != null ? _ref1 : 'top',
+        tooltipOffset: (_ref2 = options.offset) != null ? _ref2 : 0,
+        tooltipDuration: (_ref3 = options.duration) != null ? _ref3 : 0,
+        tooltipNoHover: (_ref4 = options.noHover) != null ? _ref4 : false,
+        tooltipNoFocus: (_ref5 = options.noFocus) != null ? _ref5 : false,
+        tooltipMouse: (_ref6 = options.mouse) != null ? _ref6 : false,
+        tooltipHoverableHover: (_ref7 = options.hoverableHover) != null ? _ref7 : false
       });
       if (options.mouse) {
         $els.on('mousemove', Tooltip.listeners.mousemove);
@@ -118,7 +118,7 @@
         $div.css(position.home).find('> div').css(_.extend({
           opacity: 0
         }, position.away));
-        if ($t.data().tooltipHoverable != null) {
+        if ($t.data().tooltipHoverable) {
           $div.hover(function() {
             _.Tooltip.show($t);
             return $t.data({
@@ -142,11 +142,10 @@
       return $t.data('tooltip$Div');
     },
     show: function($t) {
-      var $div, o, position;
-      o = _.Tooltip;
-      $div = o.divFor($t);
-      if (!((!($t.data().tooltipNoHover != null) && $t.data().tooltipHover) || (!($t.data().tooltipNoFocus != null) && $t.is(':input:focus')) || $t.data().tooltipHoverableHover)) {
-        position = o.position($t);
+      var $div, position;
+      $div = Tooltip.divFor($t);
+      if (!((!$t.data().tooltipNoHover && $t.data().tooltipHover) || (!$t.data().tooltipNoFocus && $t.is(':input:focus')) || $t.data().tooltipHoverableHover)) {
+        position = Tooltip.position($t);
         return $div.appendTo($t.parent()).css(_.extend({
           display: 'block'
         }, position.home)).find('> div').stop().animate({
@@ -157,11 +156,10 @@
       }
     },
     hide: function($t) {
-      var $div, o, position;
-      o = _.Tooltip;
+      var $div, position;
       if ($div = $t.data('tooltip$Div')) {
-        if (!((!($t.data().tooltipNoHover != null) && $t.data().tooltipHover) || (!($t.data().tooltipNoFocus != null) && $t.is(':input:focus')) || $t.data().tooltipHoverableHover)) {
-          position = o.position($t);
+        if (!((!$t.data().tooltipNoHover && $t.data().tooltipHover) || (!$t.data().tooltipNoFocus && $t.is(':input:focus')) || $t.data().tooltipHoverableHover)) {
+          position = Tooltip.position($t);
           return $div.css(position.home).find('> div').stop().animate(_.extend({
             opacity: 0
           }, position.away), {
@@ -178,7 +176,6 @@
     },
     position: function($t) {
       var $div, $parent, away, divHeight, divWidth, home, offset, parentScrollLeft, parentScrollTop, tHeight, tLeft, tPosition, tTop, tWidth;
-      $t = $(this);
       $div = $t.data('tooltip$Div');
       $parent = $t.parent();
       offset = $t.data().tooltipOffset;
@@ -186,7 +183,7 @@
       divHeight = $div.outerHeight();
       parentScrollLeft = $parent.scrollLeft();
       parentScrollTop = $parent.scrollTop();
-      if ($t.data().tooltipMouse != null) {
+      if ($t.data().tooltipMouse) {
         tLeft = Tooltip.mouse.x - $t.parent().offset().left + parentScrollLeft;
         tTop = Tooltip.mouse.y - $t.parent().offset().top + parentScrollTop;
         tWidth = tHeight = 0;
@@ -232,7 +229,7 @@
 
   $.extend($.fn, {
     tooltip: function(options) {
-      _.once(Tooltip.bind);
+      Tooltip.init();
       return Tooltip.add($(this), options);
     },
     correctTooltip: function() {

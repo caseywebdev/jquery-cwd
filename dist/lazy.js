@@ -4,11 +4,11 @@
 
   Lazy = {
     $els: $(),
-    bind: function() {
+    init: _.once(function() {
       return $(window).on('scroll resize', function() {
         return Lazy.check(Lazy.$els);
       });
-    },
+    }),
     check: function($imgs) {
       $imgs.each(function() {
         var $t;
@@ -29,8 +29,6 @@
       return $imgs;
     }
   };
-
-  Lazy.init = _.once(Lazy.bind);
 
   $.fn.lazy = function(src, options) {
     var $t, tolerance;
