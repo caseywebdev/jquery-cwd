@@ -389,7 +389,7 @@
       PopUp.$div.on('click', function(e) {
         return e.stopPropagation();
       }).on('click', '.js-pop-up-hide', function() {
-        return $.PopUp.hide;
+        return $.PopUp.hide();
       });
       return $(document).keydown(function(e) {
         if (PopUp.$container.css('display') === 'block' && !$('body :focus').length) {
@@ -472,12 +472,12 @@
         });
         if (PopUp.bodyStyle) {
           $('body').attr({
-            style: PopUp.saveBodyStyle
+            style: PopUp.bodyStyle
           });
         } else {
           $('body').removeAttr('style');
         }
-        return delete PopUp.bodyStyle;
+        return PopUp.bodyStyle = null;
       });
     }
   };

@@ -43,7 +43,7 @@ PopUp =
       PopUp.$div.find('.js-pop-up-outside').click()
     PopUp.$div
       .on('click', (e) -> e.stopPropagation())
-      .on 'click', '.js-pop-up-hide', -> $.PopUp.hide
+      .on 'click', '.js-pop-up-hide', -> $.PopUp.hide()
     $(document).keydown (e) ->
       if PopUp.$container.css('display') is 'block' and
           not $('body :focus').length
@@ -115,7 +115,7 @@ $.PopUp =
       , ->
         PopUp.$container.css display: 'none'
         if PopUp.bodyStyle
-          $('body').attr style: PopUp.saveBodyStyle
+          $('body').attr style: PopUp.bodyStyle
         else
           $('body').removeAttr 'style'
-        delete PopUp.bodyStyle
+        PopUp.bodyStyle = null
