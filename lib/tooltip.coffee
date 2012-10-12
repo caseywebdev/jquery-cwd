@@ -44,7 +44,7 @@ Tooltip =
       tooltipNoHover: options.noHover ? false
       tooltipNoFocus: options.noFocus ? false
       tooltipMouse: options.mouse ? false
-      tooltipHoverableHover: options.hoverableHover ? false
+      tooltipHoverable: options.hoverable ? false
     $els.on 'mousemove', Tooltip.listeners.mousemove if options.mouse
     unless options.noHover
       $els.on 'mouseenter', Tooltip.listeners.mouseenter
@@ -101,11 +101,11 @@ Tooltip =
       # over the tooltip itself)
       if $t.data().tooltipHoverable
         $div.hover ->
-          _.Tooltip.show $t
+          Tooltip.show $t
           $t.data tooltipHoverableHover: true
         , ->
           $t.data tooltipHoverableHover: false
-          _.Tooltip.hide $t
+          Tooltip.hide $t
       else
 
         # Otherwise turn off interaction with the mouse
@@ -215,13 +215,9 @@ $.extend $.fn,
           $div.css Tooltip.position($t).home
 
   # Use this to remove a tooltip
-  removeTooltip: ->
-    $(@).each ->
-      ($t = $ @)
-        .data(
-          tooltipHover: false
-          tooltipHoverableHover: false
-        )
-        .data().tooltip$Div?.remove()
-      Tooltip.$els = Tooltip.$els.not $t
-      Tooltip.bind()
+  removeTooltip: (soft) ->
+    if soft
+      $(@).each ->
+        $(@).data().tooltip$Div?.remove()
+    else
+      Tooltip.remove $ @

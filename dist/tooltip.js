@@ -59,7 +59,7 @@
         tooltipNoHover: (_ref4 = options.noHover) != null ? _ref4 : false,
         tooltipNoFocus: (_ref5 = options.noFocus) != null ? _ref5 : false,
         tooltipMouse: (_ref6 = options.mouse) != null ? _ref6 : false,
-        tooltipHoverableHover: (_ref7 = options.hoverableHover) != null ? _ref7 : false
+        tooltipHoverable: (_ref7 = options.hoverable) != null ? _ref7 : false
       });
       if (options.mouse) {
         $els.on('mousemove', Tooltip.listeners.mousemove);
@@ -118,7 +118,7 @@
         }, position.away));
         if ($t.data().tooltipHoverable) {
           $div.hover(function() {
-            _.Tooltip.show($t);
+            Tooltip.show($t);
             return $t.data({
               tooltipHoverableHover: true
             });
@@ -126,7 +126,7 @@
             $t.data({
               tooltipHoverableHover: false
             });
-            return _.Tooltip.hide($t);
+            return Tooltip.hide($t);
           });
         } else {
           $div.css({
@@ -245,18 +245,15 @@
         }
       });
     },
-    removeTooltip: function() {
-      return $(this).each(function() {
-        var $t, _ref;
-        if ((_ref = ($t = $(this)).data({
-          tooltipHover: false,
-          tooltipHoverableHover: false
-        }).data().tooltip$Div) != null) {
-          _ref.remove();
-        }
-        Tooltip.$els = Tooltip.$els.not($t);
-        return Tooltip.bind();
-      });
+    removeTooltip: function(soft) {
+      if (soft) {
+        return $(this).each(function() {
+          var _ref;
+          return (_ref = $(this).data().tooltip$Div) != null ? _ref.remove() : void 0;
+        });
+      } else {
+        return Tooltip.remove($(this));
+      }
     }
   });
 
