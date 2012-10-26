@@ -1,10 +1,11 @@
 BIN=node_modules/.bin/
 COFFEE=$(BIN)coffee
 
-all: npm-install compile-lib compile-test
+all: npm compile-lib compile-test
 
-npm-install:
+npm:
 	npm install
+	npm rebuild
 
 compile-join:
 	$(COFFEE) -c -j dist/jquery-cwd.js lib
