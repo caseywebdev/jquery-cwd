@@ -91,6 +91,10 @@ $.PopUp =
     else
       PopUp.$div.append el
 
+    if PopUp.$container.css('display') is 'block'
+      $($.PopUp).triggerHandler 'hide'
+    $($.PopUp).triggerHandler 'show'
+
     PopUp.$container
       .stop()
       .css(display: 'block')
@@ -113,6 +117,7 @@ $.PopUp =
         opacity: 0
       , fadeDuration
       , ->
+        $($.PopUp).triggerHandler 'hide'
         PopUp.$container.css display: 'none'
         if PopUp.bodyStyle
           $('body').attr style: PopUp.bodyStyle
