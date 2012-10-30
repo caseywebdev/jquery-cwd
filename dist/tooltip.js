@@ -92,7 +92,7 @@
             position: 'relative'
           });
         }
-        if ($t.data().tooltipMouse != null) {
+        if ($t.data().tooltipMouse) {
           $t.data({
             tooltipHoverable: false
           });

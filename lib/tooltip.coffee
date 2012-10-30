@@ -70,7 +70,7 @@ Tooltip =
     unless $t.data 'tooltip$Div'
       if $t.parent().css('position') is 'static'
         $t.parent().css position: 'relative'
-      $t.data tooltipHoverable: false if $t.data().tooltipMouse?
+      $t.data tooltipHoverable: false if $t.data().tooltipMouse
       $t.data _.extend
         tooltipPosition: 'top'
         tooltipOffset: 0
