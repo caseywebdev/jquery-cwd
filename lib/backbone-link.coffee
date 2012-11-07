@@ -1,6 +1,6 @@
 $.extend $.fn,
   # A backbone UI/model sync'r
-  backboneLink = (options = {}) ->
+  backboneLink: (options = {}) ->
     {model, attr, save} = options
     save ?= true
     $(@).each ->
@@ -14,18 +14,14 @@ $.extend $.fn,
         $t.data
           backboneLinkInputChange: ->
             oldVal = model.get attr
-            newVal = if checkbox then $t.is ':checked' else $t.val()
-            if attr is 'id' or
-                _.endsWith(attr, '_id') or
-                _.endsWith(attr, 'Id')
-              newVal = if newVal then parseInt newVal else null
-            model.set attr, if newVal is '' then null else newVal
-            model.save() if save and newVal isnt oldVal
+            newVal = if checkbox then $t.prop 'checked' else $t.val() or null
+            if newVal isnt oldVal
+              model[if save then 'save' else 'set'] attr, newVal, wait: true
 
         $t.data
           backboneLinkModelChange: ->
             valOrText = if $t.is ':input' then 'val' else 'text'
-            oldVal = if checkbox then $t.is ':checked' else $t[valOrText]()
+            oldVal = if checkbox then $t.prop 'checked' else $t[valOrText]()
             newVal = model.get attr
             newVal = if newVal is null then '' else newVal
             if newVal isnt oldVal
@@ -42,7 +38,7 @@ $.extend $.fn,
         $t.data().backboneLinkModelChange()
 
   # Remove the link to a backbone model
-  backboneUnlink = ->
+  backboneUnlink: ->
     $(@).each ->
       $t = $ @
       model = $t.data().backboneLinkModel
