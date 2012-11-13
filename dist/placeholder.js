@@ -83,20 +83,18 @@
         if (password) {
           $t[0].type = 'password';
         }
-        if (!(password && $.browser.msie && $.browser.version.split('.')[0] < 9)) {
-          $t.data({
-            placeholderText: text,
-            placeholderIsEmpty: false,
-            placeholderIsPassword: password
-          });
-          if (!$t.val() || $t.val() === text) {
-            $t.val('');
-          }
-          return $t.attr({
-            placeholder: text,
-            title: text
-          }).on(Placeholder.listeners);
+        $t.data({
+          placeholderText: text,
+          placeholderIsEmpty: false,
+          placeholderIsPassword: password
+        });
+        if (!$t.val() || $t.val() === text) {
+          $t.val('');
         }
+        return $t.attr({
+          placeholder: text,
+          title: text
+        }).on(Placeholder.listeners);
       }
     });
   };

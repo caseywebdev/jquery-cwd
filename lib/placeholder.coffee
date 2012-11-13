@@ -46,16 +46,14 @@ $.fn.placeholder = (text, options = {}) ->
   $(@).each ->
     unless ($t = $ @).data().placeholderIsEmpty?
       $t[0].type = 'password' if password
-      unless password and $.browser.msie and
-          $.browser.version.split('.')[0] < 9
-        $t.data
-          placeholderText: text
-          placeholderIsEmpty: false
-          placeholderIsPassword: password
-        $t.val '' if not $t.val() or $t.val() is text
-        $t.attr(
-            placeholder: text
-            title: text
-          )
-          .on Placeholder.listeners
+      $t.data
+        placeholderText: text
+        placeholderIsEmpty: false
+        placeholderIsPassword: password
+      $t.val '' if not $t.val() or $t.val() is text
+      $t.attr(
+          placeholder: text
+          title: text
+        )
+        .on Placeholder.listeners
 
