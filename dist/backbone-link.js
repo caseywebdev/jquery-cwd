@@ -24,12 +24,14 @@
           checkbox = $t.is(':checkbox');
           $t.data({
             backboneLinkInputChange: function() {
-              var newVal, oldVal;
+              var attributes, newVal, oldVal;
               oldVal = model.get(attr);
               newVal = checkbox ? $t.prop('checked') : $t.val() || null;
               if (newVal !== oldVal) {
-                return model[save ? 'save' : 'set'](attr, newVal, {
-                  wait: true
+                (attributes = {})[attr] = newVal;
+                return model[save ? 'save' : 'set'](attributes, {
+                  wait: true,
+                  attributes: attributes
                 });
               }
             }

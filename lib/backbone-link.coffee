@@ -16,7 +16,11 @@ $.extend $.fn,
             oldVal = model.get attr
             newVal = if checkbox then $t.prop 'checked' else $t.val() or null
             if newVal isnt oldVal
-              model[if save then 'save' else 'set'] attr, newVal, wait: true
+              (attributes = {})[attr] = newVal
+              model[if save then 'save' else 'set'] attributes, {
+                wait: true
+                attributes
+              }
 
         $t.data
           backboneLinkModelChange: ->
