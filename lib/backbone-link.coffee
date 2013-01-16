@@ -19,7 +19,7 @@ $.extend $.fn,
               (attributes = {})[attr] = newVal
               model[if save then 'save' else 'set'] attributes, {
                 wait: true
-                attributes
+                attr
               }
 
         $t.data

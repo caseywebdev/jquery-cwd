@@ -33,7 +33,7 @@
                 (attributes = {})[attr] = newVal;
                 return model[save ? 'save' : 'set'](attributes, {
                   wait: true,
-                  attributes: attributes
+                  attr: attr
                 });
               }
             }
