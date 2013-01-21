@@ -643,9 +643,6 @@
         } else {
           $selected = $current;
         }
-        if ($results.is(':hover')) {
-          return;
-        }
         rHeight = $results.height();
         rScrollTop = $results.scrollTop();
         sTop = $selected.position().top;
