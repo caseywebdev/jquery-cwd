@@ -57,7 +57,6 @@ Search =
         ($selected = $new).addClass 'selected'
       else
         $selected = $current
-      return if $results.is ':hover'
       rHeight = $results.height()
       rScrollTop = $results.scrollTop()
       sTop = $selected.position().top
