@@ -3,7 +3,6 @@
   var Tooltip;
 
   Tooltip = {
-    $els: $(),
     mouse: {
       x: 0,
       y: 0
@@ -49,8 +48,6 @@
       if (options == null) {
         options = {};
       }
-      Tooltip.remove($els);
-      Tooltip.$els = Tooltip.$els.add($els);
       $els.data({
         tooltipHtml: (_ref = options.html) != null ? _ref : '',
         tooltipPosition: (_ref1 = options.position) != null ? _ref1 : 'top',
@@ -73,16 +70,6 @@
         $els.on('blur', Tooltip.listeners.blur);
       }
       return $els;
-    },
-    remove: function($els) {
-      Tooltip.$els = Tooltip.$els.not($els);
-      return $els.data({
-        tooltipHover: false,
-        tooltipHoverableHover: false
-      }).off(Tooltip.listeners).each(function() {
-        var _ref;
-        return (_ref = $(this).data().tooltip$Div) != null ? _ref.remove() : void 0;
-      });
     },
     divFor: function($t) {
       var $div, position;
@@ -245,15 +232,11 @@
         }
       });
     },
-    removeTooltip: function(soft) {
-      if (soft) {
-        return $(this).each(function() {
-          var _ref;
-          return (_ref = $(this).data().tooltip$Div) != null ? _ref.remove() : void 0;
-        });
-      } else {
-        return Tooltip.remove($(this));
-      }
+    resetTooltip: function() {
+      return $(this).each(function() {
+        var _ref;
+        return (_ref = $(this).data().tooltip$Div) != null ? _ref.remove() : void 0;
+      });
     }
   });
 

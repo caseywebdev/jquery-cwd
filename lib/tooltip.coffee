@@ -1,9 +1,6 @@
 # Yay tooltips!
 Tooltip =
 
-  # Keep track of the elements we want to update
-  $els: $()
-
   # Store mouse coordinates
   mouse:
     x: 0
@@ -34,8 +31,6 @@ Tooltip =
     blur: -> Tooltip.hide $ @
 
   add: ($els, options = {}) ->
-    Tooltip.remove $els
-    Tooltip.$els = Tooltip.$els.add $els
     $els.data
       tooltipHtml: options.html ? ''
       tooltipPosition: options.position ? 'top'
@@ -53,17 +48,6 @@ Tooltip =
       $els.on 'focus', Tooltip.listeners.focus
       $els.on 'blur', Tooltip.listeners.blur
     $els
-
-  remove: ($els) ->
-    Tooltip.$els = Tooltip.$els.not $els
-    $els
-      .data(
-        tooltipHover: false
-        tooltipHoverableHover: false
-      )
-      .off(Tooltip.listeners)
-      .each ->
-        $(@).data().tooltip$Div?.remove()
 
   # Get the current tooltip$Div for an item or create a new one and return that
   divFor: ($t) ->
@@ -215,9 +199,4 @@ $.extend $.fn,
           $div.css Tooltip.position($t).home
 
   # Use this to remove a tooltip
-  removeTooltip: (soft) ->
-    if soft
-      $(@).each ->
-        $(@).data().tooltip$Div?.remove()
-    else
-      Tooltip.remove $ @
+  resetTooltip: -> $(@).each -> $(@).data().tooltip$Div?.remove()
